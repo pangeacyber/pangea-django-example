@@ -29,6 +29,8 @@ from .forms import (
 )
 from .models import Activation
 
+from pangea.config import PangeaConfig
+from pangea.services import Audit
 
 class GuestOnlyView(View):
     def dispatch(self, request, *args, **kwargs):
@@ -75,6 +77,11 @@ class LogInView(GuestOnlyView, FormView):
                 request.session.set_expiry(0)
 
         login(request, form.user_cache)
+
+        if request.user.is_authenticated:
+            config = PangeaConfig(domain=settings.DOMAIN)
+            audit = Audit(settings.TOKEN, config=config)
+            audit.log("User logged into the app!")
 
         redirect_to = request.POST.get(REDIRECT_FIELD_NAME, request.GET.get(REDIRECT_FIELD_NAME))
         url_is_safe = is_safe_url(redirect_to, allowed_hosts=request.get_host(), require_https=request.is_secure())
