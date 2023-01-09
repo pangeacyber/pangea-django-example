@@ -2,6 +2,10 @@ import os
 import warnings
 from django.utils.translation import gettext_lazy as _
 from os.path import dirname
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 warnings.simplefilter('error', DeprecationWarning)
 
@@ -26,6 +30,7 @@ INSTALLED_APPS = [
     
     # Vendor apps
     'bootstrap4',
+    'pangea',
 
     # Application apps
     'main',
@@ -99,6 +104,10 @@ LOGIN_VIA_EMAIL_OR_USERNAME = False
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_URL = 'accounts:log_in'
 USE_REMEMBER_ME = True
+
+#Pangea
+PANGEA_DOMAIN = env('PANGEA_DOMAIN')
+PANGEA_TOKEN = env('PANGEA_TOKEN')
 
 RESTORE_PASSWORD_VIA_EMAIL_OR_USERNAME = False
 ENABLE_ACTIVATION_AFTER_EMAIL_CHANGE = True

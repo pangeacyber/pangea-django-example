@@ -10,3 +10,5 @@ env/
 tmp/
 
 db.sqlite3
+source/app/conf/development/.env
+source/app/conf/production/.env
