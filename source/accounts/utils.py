@@ -3,6 +3,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+import hashlib
 
 
 def send_mail(to, template, context):
@@ -49,3 +50,11 @@ def send_forgotten_username_email(email, username):
     }
 
     send_mail(email, 'forgotten_username', context)
+
+def generate_SHA_256_hash(file):
+    with open(file, 'rb') as file:
+        file_contents = file.read()
+        hash_object = hashlib.sha256()
+        hash_object.update(file_contents)
+        file_hash = hash_object.hexdigest()
+        return file_hash

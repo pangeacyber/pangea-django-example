@@ -16,21 +16,23 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.http import require_POST
+from django.shortcuts import render
 from django.views.generic import View, FormView
 from django.conf import settings
 
 from .utils import (
-    send_activation_email, send_reset_password_email, send_forgotten_username_email, send_activation_change_email,
+    send_activation_email, send_reset_password_email, send_forgotten_username_email, send_activation_change_email, generate_SHA_256_hash,
 )
 from .forms import (
     SignInViaUsernameForm, SignInViaEmailForm, SignInViaEmailOrUsernameForm, SignUpForm,
     RestorePasswordForm, RestorePasswordViaEmailOrUsernameForm, RemindUsernameForm,
-    ResendActivationCodeForm, ResendActivationCodeViaEmailForm, ChangeProfileForm, ChangeEmailForm,
+    ResendActivationCodeForm, ResendActivationCodeViaEmailForm, ChangeProfileForm, ChangeEmailForm, DocumentForm,
 )
-from .models import Activation
+from .models import Activation, Document
 
 from pangea.config import PangeaConfig
-from pangea.services import Audit
+from pangea.services import Audit, FileIntel
 
 class GuestOnlyView(View):
     def dispatch(self, request, *args, **kwargs):
@@ -79,8 +81,8 @@ class LogInView(GuestOnlyView, FormView):
         login(request, form.user_cache)
 
         if request.user.is_authenticated:
-            config = PangeaConfig(domain=settings.DOMAIN)
-            audit = Audit(settings.TOKEN, config=config)
+            config = PangeaConfig(domain=settings.PANGEA_DOMAIN)
+            audit = Audit(settings.PANGEA_TOKEN, config=config)
             audit.log("User logged into the app!")
 
         redirect_to = request.POST.get(REDIRECT_FIELD_NAME, request.GET.get(REDIRECT_FIELD_NAME))
@@ -336,3 +338,34 @@ class RestorePasswordDoneView(BasePasswordResetDoneView):
 
 class LogOutView(LoginRequiredMixin, BaseLogoutView):
     template_name = 'accounts/log_out.html'
+
+class UploadView(FormView):
+    template_name = 'accounts/upload_form.html'
+
+    def get(self, request, *args, **kwargs):
+        template_name = 'accounts/upload_form.html'
+        form = DocumentForm()
+        return render(request, template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        template_name = 'accounts/upload_success.html'
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            newdoc = Document(file=request.FILES['file'])
+            newdoc.save()
+            
+            config = PangeaConfig(domain=settings.PANGEA_DOMAIN)   
+   
+            intel = FileIntel(settings.PANGEA_TOKEN, config=config)
+            hash=generate_SHA_256_hash(newdoc.file.path)
+            response = intel.lookup(hash=hash, hash_type="sha256", provider="reversinglabs", verbose=True, raw=True)
+
+            request.session['file_verdict'] = response.result.data.verdict
+
+            # Redirect to the document list after POST
+            return render(request, template_name, {'form': form})
+        else:
+            print("Form not valid!!")
+            template_name = 'accounts/upload_form.html'
+            message = 'The form is not valid. Fix the following error:'
+        return render(request, template_name, {'form': form})
