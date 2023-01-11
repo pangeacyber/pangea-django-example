@@ -35,8 +35,8 @@ from pangea.config import PangeaConfig
 from pangea.services import Audit, FileIntel
 
 config = PangeaConfig(domain=settings.PANGEA_DOMAIN)  
-audit = Audit(settings.PANGEA_TOKEN, config=config) #creating Securre Audit Log object
-intel = FileIntel(settings.PANGEA_TOKEN, config=config) # create File Intel object
+audit = Audit(settings.PANGEA_AUDIT_TOKEN, config=config) #creating Securre Audit Log object
+intel = FileIntel(settings.PANGEA_FILE_INTEL_TOKEN, config=config) # create File Intel object
 
 class GuestOnlyView(View):
     def dispatch(self, request, *args, **kwargs):
