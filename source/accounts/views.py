@@ -33,7 +33,7 @@ from pangea.config import PangeaConfig
 from pangea.services import Audit
 
 config = PangeaConfig(domain=settings.PANGEA_DOMAIN)  
-audit = Audit(settings.PANGEA_TOKEN, config=config) #creating Secure Audit Log object
+audit = Audit(settings.PANGEA_AUDIT_TOKEN, config=config) #creating Secure Audit Log object
 
 class GuestOnlyView(View):
     def dispatch(self, request, *args, **kwargs):
