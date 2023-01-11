@@ -22,7 +22,7 @@ from django.views.generic import View, FormView
 from django.conf import settings
 
 from .utils import (
-    send_activation_email, send_reset_password_email, send_forgotten_username_email, send_activation_change_email, generate_SHA_256_hash,
+    send_activation_email, send_reset_password_email, send_forgotten_username_email, send_activation_change_email,
 )
 from .forms import (
     SignInViaUsernameForm, SignInViaEmailForm, SignInViaEmailOrUsernameForm, SignUpForm,
@@ -33,6 +33,10 @@ from .models import Activation, Document
 
 from pangea.config import PangeaConfig
 from pangea.services import Audit, FileIntel
+
+config = PangeaConfig(domain=settings.PANGEA_DOMAIN)  
+audit = Audit(settings.PANGEA_TOKEN, config=config) #creating Securre Audit Log object
+intel = FileIntel(settings.PANGEA_TOKEN, config=config) # create File Intel object
 
 class GuestOnlyView(View):
     def dispatch(self, request, *args, **kwargs):
@@ -81,9 +85,8 @@ class LogInView(GuestOnlyView, FormView):
         login(request, form.user_cache)
 
         if request.user.is_authenticated:
-            config = PangeaConfig(domain=settings.PANGEA_DOMAIN)
-            audit = Audit(settings.PANGEA_TOKEN, config=config)
-            audit.log("User logged into the app!")
+            #calling Pangea's Secure Audit Log
+            audit.log("User: " +request.user.username+ " logged into the app!")
 
         redirect_to = request.POST.get(REDIRECT_FIELD_NAME, request.GET.get(REDIRECT_FIELD_NAME))
         url_is_safe = is_safe_url(redirect_to, allowed_hosts=request.get_host(), require_https=request.is_secure())
@@ -353,12 +356,9 @@ class UploadView(FormView):
         if form.is_valid():
             newdoc = Document(file=request.FILES['file'])
             newdoc.save()
-            
-            config = PangeaConfig(domain=settings.PANGEA_DOMAIN)   
-   
-            intel = FileIntel(settings.PANGEA_TOKEN, config=config)
-            hash=generate_SHA_256_hash(newdoc.file.path)
-            response = intel.lookup(hash=hash, hash_type="sha256", provider="reversinglabs", verbose=True, raw=True)
+
+            #calling Pangea's file intel service with the filepath
+            response = intel.lookupFilepath(filepath= newdoc.file.path , provider="reversinglabs", verbose=True, raw=True,)
 
             request.session['file_verdict'] = response.result.data.verdict
 
