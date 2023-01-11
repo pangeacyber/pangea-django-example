@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     
     # Vendor apps
     'bootstrap4',
-    'pangea',
 
     # Application apps
     'main',
@@ -97,10 +96,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-ENABLE_USER_ACTIVATION = True
+ENABLE_USER_ACTIVATION = False
 DISABLE_USERNAME = False
-LOGIN_VIA_EMAIL = True
-LOGIN_VIA_EMAIL_OR_USERNAME = False
+LOGIN_VIA_EMAIL = False
+LOGIN_VIA_EMAIL_OR_USERNAME = True
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_URL = 'accounts:log_in'
 USE_REMEMBER_ME = True
