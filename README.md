@@ -64,7 +64,7 @@ Domain is the region where your application's services are hosted and consumed. 
 
 Add the code below to `source/app/conf/development/settings`.py to import and configure the `django-environ` package. 
 
-```bash
+```python
 import environ
  
 env = environ.Env()
@@ -73,7 +73,7 @@ environ.Env.read_env()
 
 Below the constants in your code, add the Pangea API token and make it accessible in the entire application.
 
-```bash
+```python
 #Pangea
 PANGEA_DOMAIN = env('PANGEA_DOMAIN')
 PANGEA_AUDIT_TOKEN = env('PANGEA_AUDIT_TOKEN')
