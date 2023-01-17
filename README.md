@@ -4,7 +4,7 @@ An example of Django project integration with Audit Log and File Intel Services.
 
 In this example, you will see: How to integrate Pangea’s python SDK, Secure Audit Log, and File Intel service and also a File Upload feature in Python’s Django web framework.
 
-Sample App is takn from [egorsmkv](https://github.com/egorsmkv/simple-django-login-and-register-dynamic-lang)
+Sample App is takn from [egorsmkv](https://github.com/egorsmkv/simple-django-login-and-register-dynamic-lang)'s Django Simple loging and register
 
 ## Prerequisites
 * Python 3
@@ -23,9 +23,9 @@ pangea-sdk = "*"
 django-environ = "*"
 ```
 
-You are adding the `pangea-python-sdk` and `django-environ` latest packages to the project. 
+You are adding the [pangea-python-sdk](https://pangea.cloud/docs/sdk/python/) and [django-environ](https://django-environ.readthedocs.io/en/latest/) latest packages to the project. 
 
-Run the commands below to install pipenv (a python packaging & environment manager), install python dependencies, and activate the pipenv environment.
+Run the commands below to install [pipenv](https://github.com/pypa/pipenv) (a python packaging & environment manager), install python dependencies, and activate the pipenv environment.
 
 ```bash
 pip install pipenv
