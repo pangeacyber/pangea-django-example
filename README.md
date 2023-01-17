@@ -1,10 +1,10 @@
 # Pangea Django Example
 
-An example of Django project integration with Audit Log and File Intel Services.
+This is an example of Python Django project integrating with Pangea's [Audit Log](https://pangea.cloud/services/audit-log/) and [File Intel Services](https://pangea.cloud/services/file-intel/).
 
 In this example, you will see: How to integrate Pangea’s python SDK, Secure Audit Log, and File Intel service and also a File Upload feature in Python’s Django web framework.
 
-Sample App is takn from [egorsmkv](https://github.com/egorsmkv/simple-django-login-and-register-dynamic-lang)'s Django Simple loging and register
+Sample App is taken from [egorsmkv](https://github.com/egorsmkv/simple-django-login-and-register-dynamic-lang)'s Django Simple login and register example.
 
 ## Prerequisites
 * Python 3
