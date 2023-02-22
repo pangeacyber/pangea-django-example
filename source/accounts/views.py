@@ -358,7 +358,7 @@ class UploadView(FormView):
             newdoc.save()
 
             #calling Pangea's file intel service with the filepath
-            response = intel.lookupFilepath(filepath= newdoc.file.path , provider="reversinglabs", verbose=True, raw=True,)
+            response = intel.filepathReputation(filepath= newdoc.file.path, provider="reversinglabs")
 
             request.session['file_verdict'] = response.result.data.verdict
 
